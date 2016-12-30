@@ -1,4 +1,4 @@
 # Etxe_Domotikoa
 
 Kaixo!
-Zer izan naiteke hain ona?
+Zelan izan naiteke hain ona?
