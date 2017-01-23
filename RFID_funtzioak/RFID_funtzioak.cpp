@@ -4,7 +4,7 @@ uint8_t success;
 uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
 uint8_t uidLength;
 
-void RFID_abiarazi(Adafruit_PN532* nfc) {
+void RFID_abiarazi(Adafruit_PN532* nfc) { 
 	nfc->begin();
 	uint32_t versiondata = nfc->getFirmwareVersion();
 	if(!versiondata) {
