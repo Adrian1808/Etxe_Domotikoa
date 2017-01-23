@@ -1,0 +1,90 @@
+--- C:/Users/cvzcaoio/Documents/Arduino/libraries/FPS_GT511C3/FPS_GT511C3.cpp	Tue Jul 19 08:57:50 2016
++++ C:/Users/cvzcaoio/Documents/Arduino/libraries/FPS_GT511C3_modificada/FPS_GT511C3.cpp	Mon Dec 12 19:05:09 2016
+@@ -216,20 +216,27 @@
+ 
+ #pragma region -= Constructor/Destructor =-
+ // Creates a new object to interface with the fingerprint scanner
+-FPS_GT511C3::FPS_GT511C3(uint8_t rx, uint8_t tx)
+-	: _serial(rx,tx)
++FPS_GT511C3::FPS_GT511C3(HardwareSerial *hwSerial)
+ {
+-	pin_RX = rx;
+-	pin_TX = tx;
+-	_serial.begin(9600);
++	_serial = hwSerial;
++	_hwSerial = hwSerial;
++	_swSerial = NULL;
++	
++	_hwSerial->begin(9600);
++	
+ 	this->UseSerialDebug = false;
+ };
+ 
+-// destructor
+-FPS_GT511C3::~FPS_GT511C3()
++FPS_GT511C3::FPS_GT511C3(SoftwareSerial *swSerial)
+ {
+-	_serial.~SoftwareSerial();
+-}
++	_serial = swSerial;
++	_hwSerial = NULL;
++	_swSerial = swSerial;
++	
++	_swSerial->begin(9600);
++	
++	this->UseSerialDebug = false;
++};
+ #pragma endregion
+ 
+ #pragma region -= Device Commands =-
+@@ -321,8 +328,14 @@
+ 		bool retval = rp->ACK;
+ 		if (retval)
+ 		{
+-			_serial.end();
+-			_serial.begin(baud);
++			if(_hwSerial) {
++				_hwSerial->end();
++				_hwSerial->begin(baud);
++			}
++			else if(_swSerial) {
++				_swSerial->end();
++				_swSerial->begin(baud);
++			}
+ 		}
+ 		delete rp;
+ 		delete packetbytes;
+@@ -716,7 +729,7 @@
+ // Sends the command to the software serial channel
+ void FPS_GT511C3::SendCommand(byte cmd[], int length)
+ {
+-	_serial.write(cmd, length);
++	_serial->write(cmd, length);
+ 	if (UseSerialDebug)
+ 	{
+ 		Serial.print("FPS - SEND: ");
+@@ -730,10 +743,11 @@
+ {
+ 	byte firstbyte = 0;
+ 	bool done = false;
+-	_serial.listen();
++	
++	//serial->listen();
+ 	while (done == false)
+ 	{
+-		firstbyte = (byte)_serial.read();
++		firstbyte = (byte)_serial->read();
+ 		if (firstbyte == Response_Packet::COMMAND_START_CODE_1)
+ 		{
+ 			done = true;
+@@ -743,8 +757,8 @@
+ 	resp[0] = firstbyte;
+ 	for (int i=1; i < 12; i++)
+ 	{
+-		while (_serial.available() == false) delay(10);
+-		resp[i]= (byte) _serial.read();
++		while (_serial->available() == false) delay(10);
++		resp[i]= (byte) _serial->read();
+ 	}
+ 	Response_Packet* rp = new Response_Packet(resp, UseSerialDebug);
+ 	delete resp;

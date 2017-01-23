@@ -1,0 +1,29 @@
+--- C:/Users/cvzcaoio/Documents/Arduino/libraries/FPS_GT511C3/FPS_GT511C3.h	Tue Jul 19 08:57:50 2016
++++ C:/Users/cvzcaoio/Documents/Arduino/libraries/FPS_GT511C3_modificada/FPS_GT511C3.h	Mon Dec 12 18:43:05 2016
+@@ -164,13 +164,10 @@
+ 
+ 	#pragma region -= Constructor/Destructor =-
+ 	// Creates a new object to interface with the fingerprint scanner
+-	FPS_GT511C3(uint8_t rx, uint8_t tx);
+-	
+-	// destructor
+-	~FPS_GT511C3();
++	FPS_GT511C3(HardwareSerial* hwserial);
++    FPS_GT511C3(SoftwareSerial* swserial);
+ 	#pragma endregion
+ 
+-
+ 	#pragma region -= Device Commands =-
+ 	//Initialises the device and gets ready for commands
+ 	void Open();
+@@ -340,7 +337,9 @@
+ 	 void SendCommand(byte cmd[], int length);
+ 	 Response_Packet* GetResponse();
+ 	 uint8_t pin_RX,pin_TX;
+-	 SoftwareSerial _serial;
++	 Stream* _serial;
++  	 HardwareSerial* _hwSerial;
++  	 SoftwareSerial* _swSerial;
+ };
+ 
+ 

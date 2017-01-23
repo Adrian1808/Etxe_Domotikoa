@@ -1,0 +1,8 @@
+1548c1548
+<       timer += 10;
+---
+>       timer += 30;
+1550c1550
+<         PN532DEBUGPRINT.println("TIMEOUT!");
+---
+>         //PN532DEBUGPRINT.println("TXARTELA ITXAROTEN...");
